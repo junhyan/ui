@@ -3,15 +3,16 @@ class Control {
         this.data = data || {};
         this.main = main;
         main.control = this;
-        main.getControl = Control.getControl;
+        main.getControl = () => main.control;
         this.getOptions(main);
     }
     $click(event) {
+        console.log('click')
     }
 
-    static getControl() {
-        return this.control;
-    }
+    // static getControl() {
+    //     return this.control;
+    // }
     getOptions(el) {
         let names = el.getAttributeNames();
         names.forEach(item => {
