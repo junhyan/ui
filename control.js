@@ -1,23 +1,27 @@
 class Control {
-    constructor(main) {
+    constructor(main, data) {
+        this.data = data || {};
         this.main = main;
         main.control = this;
         main.getControl = Control.getControl;
-        this.options = Control.getOptions(main);
+        this.getOptions(main);
     }
     $click(event) {
-        // console.log(this);
-        console.log('control click');
     }
 
     static getControl() {
         return this.control;
     }
-    static getOptions(el) {
+    getOptions(el) {
         let names = el.getAttributeNames();
         names.forEach(item => {
-            if (/^:[a-zA-Z0-9]+/.test(item)) {
-
+            if (/^:([a-zA-Z0-9]+)/.test(item)) {
+                const key = RegExp.$1;
+                let value = el.getAttribute(item);
+                if (/\${(.+)}/.test(value)) {
+                    value = this.data[RegExp.$1];
+                }
+                this[key] = value;
             }
         });
         return;

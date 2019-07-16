@@ -1,10 +1,10 @@
 import Control from './control.js'
 class Button extends Control {
-    constructor(main) {
-        super(main);
+    constructor(main, data) {
+        super(main, data);
     }
-    $click() {
-        super.$click();
+    $click(event) {
+        super.$click(event);
     }
 }
 export default Button;
