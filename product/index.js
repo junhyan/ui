@@ -1,4 +1,4 @@
-import Controls from './controls.js'
+import Controls from './ui/controls.js'
 class MyButton extends Controls.Button {
     constructor(main) {
         super(main);
