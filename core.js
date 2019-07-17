@@ -4,7 +4,7 @@ import util from './util.js'
 
 class Core {
     init() {
-        this.addEventListeners(window, events.baseEvents);
+        events.addEventListeners(window, events.baseEvents);
         Array.from(document.body.getElementsByTagName('*')).forEach(item => {
             let tagName = item.tagName.toLowerCase(),
                 className = tagName.charAt(0).toUpperCase() + util.toCamelCase(tagName.slice(1));
@@ -17,13 +17,13 @@ class Core {
         }
         new Control(el);
     }
-    addEventListeners(obj, baseEvents) {
-        for (var key in baseEvents) {
-            if (baseEvents.hasOwnProperty(key)) {
-                obj.addEventListener(key, baseEvents[key]);
-            }
-        }
-    };
+    getFocus() {
+        return events.focusControl;
+    }
+    getActive() {
+        return events.activeControl;
+    }
+    
     
 }
 export default new Core();

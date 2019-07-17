@@ -1,7 +1,10 @@
+import util from './util.js'
 class Control {
-    constructor(main, data) {
+    constructor(main, primaryClass, data) {
         this.data = data || {};
         this.main = main;
+        this.primaryClass = primaryClass || '';
+        util.addClass(this.main, this.primaryClass);
         main.control = this;
         main.getControl = () => main.control;
         this.getOptions(main);
@@ -10,9 +13,14 @@ class Control {
         console.log('click')
     }
 
-    // static getControl() {
-    //     return this.control;
-    // }
+    alterStatus(status) {
+        if (status.charAt(0) === '+') {
+            util.addClass(this.main, this.primaryClass + '-' + status.slice(1) + ' ');
+        } else if (status.charAt(0) === '-') {
+            util.removeClass(this.main, this.primaryClass + '-' + status.slice(1));
+        }
+    }
+
     getOptions(el) {
         let names = el.getAttributeNames();
         names.forEach(item => {

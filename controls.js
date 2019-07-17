@@ -18,10 +18,16 @@ Controls.addControl = function (list) {
         list = [list];
     }
     list.forEach(classItem => {
-        if (this.hasOwnProperty(classItem.name)) {
-            console.warn(`Duplicate class name of ${classItem.name}`);
+        let className = classItem.name;
+        if (this.hasOwnProperty(className)) {
+            if (this.innerClasses.indexOf(className) !== -1) {
+                console.warn(`Inner class ${className}`);
+
+            } else {
+                console.warn(`Duplicate class name of ${className}`);
+            }
         } else {
-            this[classItem.name] = classItem;
+            this[className] = classItem;
         }
     });
 }
