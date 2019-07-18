@@ -33,5 +33,8 @@ class Util {
         }
         el.className = oldClasses.join(' ');
     }
+    getControl(el) {
+        return el.getControl && el.getControl();
+    }
 }
 export default new Util();

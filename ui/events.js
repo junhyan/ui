@@ -1,53 +1,96 @@
+import Event from './event.js'
 class Events {
     constructor() {
         this.activeControl = null;
         this.focusControl = null;
+        this.initEvent();
+    }
+    setFocus(control) {
+        if (this.focusControl !== control) {
+            if (this.focusControl) {
+                this.dispatchEvent(this.focusControl, 'blur', event);
+                this.focusControl.alterStatus('-focus');
+            }
+            this.focusControl = control;
+            this.dispatchEvent(control, 'focus', event);
+            control.alterStatus('+focus');
+        }
+    }
+    setActive(control) {
+        if (control) {
+            this.activeControl = control;
+            control.alterStatus('+active');
+            this.dispatchEvent(control, 'focus', event);
+        } else {
+            this.activeControl.alterStatus('-active');
+            this.activeControl = null;
+        }
+       
+    }
+
+    initEvent() {
+        let isToucher = document.ontouchstart !== undefined;
         this.baseEvents = {
             click: (event) => {
-                if (event.target.getControl) {
-                    let control = event.target.getControl()
+                event = new Event(event);
+                let control = event.getTarget();
+                if (control) {
                     this.dispatchEvent(control, 'click', event);
                 }
             },
+            touchstart:  (event) => {
+                event = new Event(event);
+                let control = event.getTarget();
+                if (control) {
+                    this.dispatchEvent(control, 'touchstart', event);
+                    this.setFocus(control);
+                    this.setActive(control);
+                }
+            }
+
+        }
+        this.mouseEvent = {
             mousedown: (event) => {
-                if (event.target.getControl) {
-                    let control = event.target.getControl()
+                event = new Event(event);
+                let control = event.getTarget();
+                if (control) {
                     this.dispatchEvent(control, 'mousedown', event);
-                    if (this.focusControl !== control) {
-                        if (this.focusControl) {
-                            this.dispatchEvent(this.focusControl, 'blur', event);
-                            this.focusControl.alterStatus('-focus');
-                        }
-                        this.focusControl = control;
-                        this.dispatchEvent(control, 'focus', event);
-                        control.alterStatus('+focus');
-                    }
-                    this.activeControl = control;
-                    control.alterStatus('+active');
-                    this.dispatchEvent(control, 'focus', event);   
+                    this.setFocus(control);
+                    this.setActive(control);
                 }
             },
             mouseup: (event) => {
-                if (event.target.getControl) {
-                    let control = event.target.getControl()
+                event = new Event(event);
+                let control = event.getTarget();
+                if (control) {
                     this.dispatchEvent(control, 'mouseup', event);
-                    this.activeControl.alterStatus('-active');
-                    this.activeControl = null;
+                    this.setActive();
                 }
             },
             mouseover: (event) => {
-                if (event.target.getControl) {
-                    let control = event.target.getControl()
+                event = new Event(event);
+                let control = event.getTarget();
+                if (control) {
                     this.dispatchEvent(control, 'mouseover', event);
                 }
             },
             mouseout: (event) => {
-                if (event.target.getControl) {
-                    let control = event.target.getControl()
+                event = new Event(event);
+                let control = event.getTarget();
+                if (control) {
                     this.dispatchEvent(control, 'mouseout', event);
                 }
             },
-
+            mousemove: (event) => {
+                event = new Event(event);
+                let control = event.getTarget();
+                if (control) {
+                    this.dispatchEvent(control, 'mousemove', event);
+                }
+            }
+        }
+        if (!isToucher) {
+            Object.assign(this.baseEvents, this.mouseEvent);
         }
     }
     dispatchEvent(control, name, event) { 

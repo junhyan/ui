@@ -10,7 +10,7 @@ class Control {
         this.getOptions(main);
     }
     $click(event) {
-        console.log('click')
+        // console.log('click')
     }
 
     alterStatus(status) {

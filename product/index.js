@@ -21,5 +21,11 @@ class MyButton extends Controls.Button {
     onmouseup() {
         console.log('mouseup');
     }
+    onmousemove() {
+        console.log('mousemove');
+    }
+    ontouchstart() {
+        console.log('touchstart');
+    }
 }
 Controls.addControl(MyButton);

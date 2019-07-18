@@ -13,7 +13,6 @@ var server = http.createServer(function (request, response) {
     } else {
         realPath = path.join("product", pathname); 
     }
-    console.log(realPath)
     var ext = path.extname(realPath);
     ext = ext ? ext.slice(1) : 'unknown';
     fs.exists(realPath, function (exists) {
