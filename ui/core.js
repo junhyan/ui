@@ -1,21 +1,27 @@
 import events from './events.js';
-import Controls from './controls.js';
-import util from './util.js'
+import Compiler from './compiler.js';
 
 class Core {
+    constructor() {
+        this.compiler = new Compiler();
+    }
     init() {
         events.addEventListeners(window, events.baseEvents);
-        Array.from(document.body.getElementsByTagName('*')).forEach(item => {
-            let tagName = item.tagName.toLowerCase(),
-                className = tagName.charAt(0).toUpperCase() + util.toCamelCase(tagName.slice(1));
-            this.create(Controls[className], item);
-        });
+        // Array.from(document.body.getElementsByTagName('*')).forEach(item => {
+        //     let tagName = item.tagName.toLowerCase(),
+        //         className = tagName.charAt(0).toUpperCase() + util.toCamelCase(tagName.slice(1));
+        //     this.create(Controls[className], item);
+        // });
+        var fragment = this.compiler.nodeToFragment(document.body);
+        this.compiler.compileElement(fragment, this);
+        document.body.appendChild(fragment);
+
     }
-    create(Control, el) {
+    create(Control, el, options) {
         if (!Control) {
-            return;
+            return null;
         }
-        new Control(el);
+        return new Control(el, options);
     }
     getFocus() {
         return events.focusControl;
@@ -25,5 +31,6 @@ class Core {
     }
     
     
+    
 }
-export default new Core();
+export default Core;

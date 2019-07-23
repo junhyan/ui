@@ -1,13 +1,13 @@
 import util from './util.js'
 class Control {
-    constructor(main, primaryClass, data) {
-        this.data = data || {};
+    constructor(main, primaryClass, options) {
+       this.options = options || {};
         this.main = main;
         this.primaryClass = primaryClass || '';
         util.addClass(this.main, this.primaryClass);
         main.control = this;
         main.getControl = () => main.control;
-        this.getOptions(main);
+      //  this.getOptions(main);
     }
     $click(event) {
         // console.log('click')
@@ -21,19 +21,6 @@ class Control {
         }
     }
 
-    getOptions(el) {
-        let names = el.getAttributeNames();
-        names.forEach(item => {
-            if (/^:([a-zA-Z0-9]+)/.test(item)) {
-                const key = RegExp.$1;
-                let value = el.getAttribute(item);
-                if (/\${(.+)}/.test(value)) {
-                    value = this.data[RegExp.$1];
-                }
-                this[key] = value;
-            }
-        });
-        return;
-    }
+   
 }
 export default Control;
