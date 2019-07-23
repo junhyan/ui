@@ -26,8 +26,13 @@ export default class Compiler {
                 arr && arr.forEach((item) => {
                     text = text.replace(/\$\{(.+?)\}/, core.getRoute().context[RegExp.$1]);
                     // node.textContent = ;
-                })
-                console.log(text);
+                    new Watcher(core.getRoute(), RegExp.$1, function (value) {
+                       
+                        node.textContent = value;
+                    });
+                });
+                node.textContent = text;
+                
             }
             
             // var reg = /$\{(.*)\}/;

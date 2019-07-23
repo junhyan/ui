@@ -3,8 +3,8 @@
 */
 import Dep from './dep.js'
 class Observer {
-    constructor(value) {
-        // this._value = value;
+    constructor(route, value) {
+        this.route = route;
         this.walk(value);
     }
     walk(obj) {
@@ -15,7 +15,7 @@ class Observer {
 
     defineReactive(obj) {
         const dep = new Dep();
-        this.data = new Proxy(obj, {
+        this.route.data = new Proxy(obj, {
             get(target, key) {
                 if (Dep.target) {
                     dep.addSub(Dep.target); // 在这里添加一个订阅者
@@ -23,12 +23,12 @@ class Observer {
                 return target[key];
             },
             set(target, key, newVal) {
-                
                 if (target[key] === newVal) {
-                    return;
+                    return true;
                 }
                 target[key] = newVal;
                 dep.notify();
+                return true;
             }
         })
     }
