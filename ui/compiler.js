@@ -21,8 +21,13 @@ export default class Compiler {
                 className = tagName.charAt(0).toUpperCase() + util.toCamelCase(tagName.slice(1));
                 core.create(Controls[className], node, this.getOptions(node, {test: 1}));
             } else if (node.nodeType === 3) {
-                let reg = /$\{(.*)\}/;
                 let text = node.textContent;
+                let arr = text.match(/\$\{(.+?)\}/g);
+                arr && arr.forEach((item) => {
+                    text = text.replace(/\$\{(.+?)\}/, core.getRoute().context[RegExp.$1]);
+                    // node.textContent = ;
+                })
+                console.log(text);
             }
             
             // var reg = /$\{(.*)\}/;
@@ -35,6 +40,14 @@ export default class Compiler {
             if (node.childNodes && node.childNodes.length) {
                 this.compileElement(node);  // 继续递归遍历子节点
             }
+        });
+    }
+    compileText (node, key) {
+       // var self = this;
+       // var initText = this._component.getData()[key];
+       // this.updateText(node, initText);  // 将初始化的数据初始化到视图中
+        new Watcher(this._component, exp, function (value) { // 生成订阅器并绑定更新函数
+            //self.updateText(node, value);
         });
     }
     getOptions(el, context) {

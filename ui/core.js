@@ -29,7 +29,14 @@ class Core {
     getActive() {
         return events.activeControl;
     }
-    
+    getRoute() {
+        return {
+            context: {
+                test: 'hahaha',
+                test1: 'gagaag'
+            }
+        }
+    }
     
     
 }
