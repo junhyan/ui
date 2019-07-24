@@ -17,7 +17,7 @@ export default class Watcher {
         var oldVal = this.value;
         if (value !== oldVal) {
             this.value = value;
-            this.callback.call(this.route, value, oldVal);
+            this.callback.call(this.route, this.key, value, oldVal);
         }
     }
     get () {

@@ -23,15 +23,49 @@ export default class Compiler {
             } else if (node.nodeType === 3) {
                 let text = node.textContent;
                 let arr = text.match(/\$\{(.+?)\}/g);
-                arr && arr.forEach((item) => {
-                    text = text.replace(/\$\{(.+?)\}/, core.getRoute().context[RegExp.$1]);
-                    // node.textContent = ;
-                    new Watcher(core.getRoute(), RegExp.$1, function (value) {
-                       
-                        node.textContent = value;
+                let strArr = text.split(/\$\{.+?\}/);
+                let resArr = [];
+                if (arr) {
+                    var count = 0
+                    arr.forEach((item, index) => {    
+                        strArr.splice(2 * index + 1, 0, item);
                     });
+                }
+                strArr.forEach((item) => {
+                    if (/\$\{(.+?)\}/.test(item)) {
+                        let key = RegExp.$1;
+                        item = {};
+                        item[key] = core.getRoute().context[key];
+                    }
+                    resArr.push(item);
                 });
-                node.textContent = text;
+                let res = ''
+                resArr.forEach((item) => {
+                    if (typeof(item) !== 'string') {
+                        item = Object.values(item)[0];
+                    }
+                    res += item;
+                });
+                node.textContent = res;
+                
+                arr && arr.forEach((item) => {
+                    if (/\$\{(.+?)\}/.test(item)) {
+                        new Watcher(core.getRoute(), RegExp.$1, function (key, value) {
+                            let wathcRes = '';
+                            resArr.forEach((resItem) => {
+                                if (typeof(resItem) !== 'string') {
+                                    if (resItem.hasOwnProperty(key)) {
+                                        resItem[key] = core.getRoute().data[key]
+                                    }
+                                    resItem = Object.values(resItem)[0];
+                                }
+                                wathcRes += resItem;
+                            });
+                            node.textContent = wathcRes;
+                        });
+                    }
+                    
+                });
                 
             }
             
