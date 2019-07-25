@@ -153,6 +153,13 @@ class Util {
             onerror(xhr);
         }
     }
+    loadInnerScript(script, callback) {
+        var scriptEl = document.createElement('SCRIPT');
+        scriptEl.type = 'module';
+        scriptEl.innerHTML = script;
+        document.head.appendChild(scriptEl);
+        debugger
+    }
     loadScript(url, callback, options) {
         function removeScriptTag() {
             if (stop) {
@@ -178,6 +185,7 @@ class Util {
         // IE和opera支持onreadystatechange
         // safari、chrome、opera支持onload
         scr.onload = scr.onreadystatechange = function () {
+            debugger
             // 避免opera下的多次调用
             if (scriptLoaded) {
                 return;
@@ -210,7 +218,11 @@ class Util {
         if (options.charset) {
             scr.setAttribute('charset', options.charset);
         }
-        scr.setAttribute('src', url);
+        if (options.inner) {
+            scr.innerHTML =  url;
+        } else {
+            scr.setAttribute('src', url);
+        }
        
         document.head.appendChild(scr);
     }

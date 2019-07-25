@@ -19,6 +19,7 @@ export default class Compiler {
             if (node.nodeType === 1) {
                 let tagName = node.tagName.toLowerCase(),
                 className = tagName.charAt(0).toUpperCase() + util.toCamelCase(tagName.slice(1));
+               
                 core.create(Controls[className], node, this.getOptions(node, {test: 1}));
             } else if (node.nodeType === 3) {
                 let text = node.textContent;
