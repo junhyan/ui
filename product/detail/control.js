@@ -4,12 +4,6 @@ export default class How extends Control {
         super(main);
     }
     onclick() {
-        console.log(1);
+        console.log('how');
     }
 }
-// Controls.addControl(What);
-// new RouteFactory().addRoute({
-//     name: 'index',
-//     main: 'index',
-//     view: '' 
-// });

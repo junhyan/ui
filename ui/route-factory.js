@@ -2,7 +2,7 @@ import util from "./util.js";
 var configs = {
     '/': {path: '/main', router: 'main'},
     '/detail': {path:'/detail/index', router:'index'},
-    '/detail/more': {path: '/detail/detail', router:'index'}
+    '/detail/more': {path: '/detail/more', router:'index'}
 };
 class  SingletonRouteFactory{
     constructor(Main) {
@@ -57,7 +57,10 @@ class  SingletonRouteFactory{
         let route = routeObj && routeObj.routeControl;
         if (route) {
             document.getElementById(config.router).innerHTML = '';
+            
+            route.main.getElementsByTagName('ROUTER')[0] && (route.main.getElementsByTagName('ROUTER')[0].innerHTML = '');
             document.getElementById(config.router).appendChild(route.main);
+
         } else {
             util.ajax(`${config.path}.html`, {onsuccess: (data) => {
                 document.getElementById(config.router).innerHTML = data;
@@ -68,9 +71,7 @@ class  SingletonRouteFactory{
                     // new Compiler(node, );
                 }).catch((err)=>{console.log(err)})
             }});
-        }
-       
-       
+        } 
     }
 }
 var RouteFactory = (function () {
