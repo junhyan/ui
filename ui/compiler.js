@@ -1,8 +1,13 @@
 import Watcher from './watcher.js';
 import util from './util.js'
-import Controls from './controls.js';
 
 export default class Compiler {
+    constructor(control, el) {
+        this.control = control;
+        let fragment = this.nodeToFragment(el);
+        this.compileElement(fragment);
+        el.appendChild(fragment);
+    }
 	nodeToFragment (el) {
         var fragment = document.createDocumentFragment();
         var child = el.firstChild;
@@ -13,14 +18,23 @@ export default class Compiler {
         }
         return fragment;
     }
-    compileElement (el, core) {
-        var childNodes = el.childNodes;
+    create(Control, el, options) {
+        if (!Control) {
+            return null;
+        }
+        return new Control(el, options);
+    }
+    compileElement (el) {
+        let childNodes = el.childNodes,
+            isControl = false;
         Array.from(childNodes).forEach((node)  => {
             if (node.nodeType === 1) {
                 let tagName = node.tagName.toLowerCase(),
                 className = tagName.charAt(0).toUpperCase() + util.toCamelCase(tagName.slice(1));
                
-                core.create(Controls[className], node, this.getOptions(node, {test: 1}));
+                if (this.create(this.control.units[className], node, this.getOptions(node, {test: 1}))) {
+                    isControl = true;
+                }
             } else if (node.nodeType === 3) {
                 let text = node.textContent;
                 let arr = text.match(/\$\{(.+?)\}/g);
@@ -36,7 +50,7 @@ export default class Compiler {
                     if (/\$\{(.+?)\}/.test(item)) {
                         let key = RegExp.$1;
                         item = {};
-                        item[key] = core.getRoute().context[key];
+                        item[key] = this.control.model[key];
                     }
                     resArr.push(item);
                 });
@@ -51,12 +65,12 @@ export default class Compiler {
                 
                 arr && arr.forEach((item) => {
                     if (/\$\{(.+?)\}/.test(item)) {
-                        new Watcher(core.getRoute(), RegExp.$1, function (key, value) {
+                        new Watcher(this.control, RegExp.$1, (key, value) => {
                             let wathcRes = '';
                             resArr.forEach((resItem) => {
                                 if (typeof(resItem) !== 'string') {
                                     if (resItem.hasOwnProperty(key)) {
-                                        resItem[key] = core.getRoute().data[key]
+                                        resItem[key] = this.control.data[key]
                                     }
                                     resItem = Object.values(resItem)[0];
                                 }
@@ -70,14 +84,9 @@ export default class Compiler {
                 
             }
             
-            // var reg = /$\{(.*)\}/;
-            // var text = node.textContent;
+           
 
-            // if (self.isTextNode(node) && reg.test(text)) {  // 判断是否是符合这种形式{{}}的指令
-            //     self.compileText(node, reg.exec(text)[1]);
-            // }
-
-            if (node.childNodes && node.childNodes.length) {
+            if (node.childNodes && node.childNodes.length && !isControl) {
                 this.compileElement(node);  // 继续递归遍历子节点
             }
         });
