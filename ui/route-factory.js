@@ -1,7 +1,9 @@
-import Route from "./route.js";
 import util from "./util.js";
-import Compiler from "./compiler.js";
-
+var configs = {
+    '/': {path: '/main', router: 'main'},
+    '/detail': {path:'/detail/index', router:'index'},
+    '/detail/more': {path: '/detail/detail', router:'index'}
+};
 class  SingletonRouteFactory{
     constructor(Main) {
         //util.ajax('/index/index.js');
@@ -27,8 +29,8 @@ class  SingletonRouteFactory{
         window.addEventListener('hashchange', this.hashChangeListener.bind(this));
     }
     hashChangeListener(event) {
-        this.old = event.oldURL.split('#')[1] || '/main';
-        this.new = event.newURL.split('#')[1] || '/main';
+        this.old = event.oldURL.split('#')[1] || '/';
+        this.new = event.newURL.split('#')[1] || '/';
         this.currentModual = this.new.split('/')[0];
         this.currentRoute = this.new.split('/')[1];
         // if (/(<target>[\s\S]*<\/target>)/.test(data)) {
@@ -46,22 +48,23 @@ class  SingletonRouteFactory{
     // addRoute(route) {
     //     this.routes.push(new Route(route));
     // }
-    go(name) {
+    go(url) {
         // if () {
         //     name = '/main';
         // }
-        let routeObj = this.routes.filter((item) => item.name === name)[0];
+        var config = configs[url];
+        let routeObj = this.routes.filter((item) => item.url === url)[0];
         let route = routeObj && routeObj.routeControl;
         if (route) {
-            document.getElementById('index').innerHTML = '';
-            document.getElementById('index').appendChild(route.main);
+            document.getElementById(config.router).innerHTML = '';
+            document.getElementById(config.router).appendChild(route.main);
         } else {
-            util.ajax(`${name}.html`, {onsuccess: (data) => {
-                document.getElementById('index').innerHTML = data;
-                let node = document.getElementById('index').children[0];
-                import(`${name}.js`).then((Mod) => {
+            util.ajax(`${config.path}.html`, {onsuccess: (data) => {
+                document.getElementById(config.router).innerHTML = data;
+                let node = document.getElementById(config.router).children[0];
+                import(`${config.path}.js`).then((Mod) => {
                     let routeControl = new Mod.default(node);
-                    this.routes.push({name: name, routeControl: routeControl});
+                    this.routes.push({url: url, routeControl: routeControl});
                     // new Compiler(node, );
                 }).catch((err)=>{console.log(err)})
             }});

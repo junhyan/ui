@@ -6,7 +6,7 @@ import Compiler from './compiler.js';
 class Control {
     constructor(main, primaryClass, options) {
         this.options = options || {};
-        this.units = options.units || {};
+        this.units = this.options.units || {};
         this.main = main;
         this.primaryClass = primaryClass || '';
         util.addClass(this.main, this.primaryClass);

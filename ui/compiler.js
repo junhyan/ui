@@ -1,5 +1,7 @@
 import Watcher from './watcher.js';
 import util from './util.js'
+import RouteFactory from '../ui/route-factory.js';
+
 
 export default class Compiler {
     constructor(control, el) {

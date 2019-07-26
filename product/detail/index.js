@@ -1,6 +1,5 @@
-import Controls from '../ui/controls.js'
-import RouteFactory from '../ui/route-factory.js'
-export default class What extends Controls.Control {
+import Control from '../ui/control.js'
+export default class What extends Control {
     constructor(main) {
         super(main);
     }

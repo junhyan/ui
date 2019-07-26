@@ -5,7 +5,6 @@ class Ui{
         document.addEventListener('DOMContentLoaded', function () {
             new Core().init();
             new RouteFactory(Main);
-            // var b = new RouteFactory();
         });
     }
 }
