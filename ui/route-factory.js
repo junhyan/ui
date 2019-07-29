@@ -1,16 +1,13 @@
 import util from "./util.js";
-var configs = {
-    '/': {path: '/main', router: 'main'},
-    '/detail': {path:'/detail/index', router:'index'},
-    '/detail/more': {path: '/detail/more', router:'index'}
-};
+
 class  SingletonRouteFactory{
-    constructor(Main) {
+    constructor(Main, router) {
         //util.ajax('/index/index.js');
         // this.routes = {
         //     '/index': '/index',
         //     '/b': '/b',
         // }
+        this.router = router;
         util.ajax(`/main.html`, {onsuccess: (data) => {
             document.body.innerHTML = data;
             let node = document.body.children[0];
@@ -52,7 +49,7 @@ class  SingletonRouteFactory{
         // if () {
         //     name = '/main';
         // }
-        var config = configs[url];
+        var config = this.router.configs[url];
         let routeObj = this.routes.filter((item) => item.url === url)[0];
         let route = routeObj && routeObj.routeControl;
         if (route) {
@@ -76,9 +73,9 @@ class  SingletonRouteFactory{
 }
 var RouteFactory = (function () {
     var instance;
-    return function (Main) {
+    return function (Main, router) {
         if (!instance) {
-            instance = new SingletonRouteFactory(Main);
+            instance = new SingletonRouteFactory(Main, router);
         }
         return instance;
     }
