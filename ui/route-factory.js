@@ -2,11 +2,7 @@ import util from "./util.js";
 
 class  SingletonRouteFactory{
     constructor(Main, router) {
-        //util.ajax('/index/index.js');
-        // this.routes = {
-        //     '/index': '/index',
-        //     '/b': '/b',
-        // }
+        
         this.router = router;
         util.ajax(`/main.html`, {onsuccess: (data) => {
             document.body.innerHTML = data;

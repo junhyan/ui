@@ -86,21 +86,12 @@ export default class Compiler {
                 
             }
             
-           
-
             if (node.childNodes && node.childNodes.length && !isControl) {
                 this.compileElement(node);  // 继续递归遍历子节点
             }
         });
     }
-    compileText (node, key) {
-       // var self = this;
-       // var initText = this._component.getData()[key];
-       // this.updateText(node, initText);  // 将初始化的数据初始化到视图中
-        new Watcher(this._component, exp, function (value) { // 生成订阅器并绑定更新函数
-            //self.updateText(node, value);
-        });
-    }
+   
     getOptions(el, context) {
         let names = el.getAttributeNames();
         var options = {};
