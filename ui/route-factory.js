@@ -8,12 +8,12 @@ class  SingletonRouteFactory{
         //     document.body.innerHTML = data;
         //     let node = document.body.children[0];
             
-        let routeControl = new Main(node);
+        let routeControl = new Main();
+        this.routes = [];
         this.routes.push({name: '/main', routeControl: routeControl});
             // new Compiler(node, );
           
         // }});
-        this.routes = [];
 
         this.init();
 

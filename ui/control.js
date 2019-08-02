@@ -6,20 +6,21 @@ import {renderTree} from './compiler.js';
 
 
 class Control {
-    constructor(main, primaryClass, options) {
+    constructor(view, primaryClass, options) {
         this.options = options || {};
         this.units = this.options.units || {};
-        this.main = main;
-        this.primaryClass = primaryClass || '';
-        util.addClass(this.main, this.primaryClass);
-        main.control = this;
-        main.getControl = () => main.control;
+        // this.main = main;
+        // this.primaryClass = primaryClass || '';
+        // util.addClass(this.main, this.primaryClass);
+        // main.control = this;
+        // main.getControl = () => main.control;
+        this.view = view;
         this.model = {
             test: 'hahaha',
             test1: 'gagaag'
         }
         new Observer(this, this.model);
-        new Compiler(this, main);
+        new Compiler(this);
         setTimeout(() => {
             console.log(renderTree);
 

@@ -3,14 +3,49 @@ import util from './util.js'
 import RouteFactory from '../ui/route-factory.js';
 
 var renderTree;
+var Command = {
+    IF: 0,
+    ELSEIF: 1,
+    ELSE: 2,
+    FOR: 3,
+    BIND: 4
+}
 export default class Compiler {
-    constructor(control, el) {
+    constructor(control) {
         this.control = control;
         // let parent = el.parentNode;
-        let fragment = this.nodeToFragment(el);
+        // let fragment = this.nodeToFragment(el);
 
-        this.compileElement(fragment.firstChild);
+        // this.compileElement(fragment.firstChild);
         // el.appendChild(fragment);
+        this.createAST(control.view);
+    }
+    createAST(elStr) {
+        debugger
+        var tmpEL = document.createElement('DIV');
+        tmpEL.innerHTML = elStr;
+        var root = new AstNode();
+        ast(root, tmpEL);
+        function ast (root, el) {
+            Array.from(el.childNodes).forEach( (item) => {
+                if (item.nodeType === 1) {
+                    let node = new AstNode();
+                    node.tag = item.tagName;
+                    node.className = item.className;
+                    node.style = item.style;
+                    node.parent = root;
+                    root.children.push(node);
+                    ast(node, item);
+                } else if (item.nodeType === 3) {
+                    let node = new AstNode();
+                    node.parent = root;
+                    root.children.push(node);
+                }
+            });
+        }
+
+        console.log(root, tmpEL);
+
     }
 	nodeToFragment (el) {
         var fragment = document.createDocumentFragment();
@@ -158,6 +193,18 @@ class RenderNode {
         this.preSibling = preSibling;
         this.nextSibling = nextSibling;
         domNode.abstractNode = this;
+    }
+ }
+ class AstNode {
+    constructor(tag, className, style, commands, parent, children, pre, next) {
+        this.tag = tag;
+        this.className = className;
+        this.style = style;
+        this.commands = commands;
+        this.parent = parent;
+        this.children = children || [];
+        this.pre = pre;
+        this.next = next;
     }
  }
  export {renderTree};
