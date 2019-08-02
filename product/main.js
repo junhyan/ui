@@ -3,6 +3,7 @@ import Button from '../ui/button.js'
 export default class Main extends Control {
     constructor(main) {
         super(main, 'main', {units: {MyButton}});
+        this.view = '<main><my-button style="display: block;height:100px;width:100px;background:red" :test="${test}"><div> ceshi </div></my-button>${test}${test1}<div id="index"></div></main>'
     }
 }
 class MyButton extends Button {

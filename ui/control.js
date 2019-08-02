@@ -1,6 +1,8 @@
 import util from './util.js';
 import Observer from './observer.js';
 import Compiler from './compiler.js';
+import {renderTree} from './compiler.js';
+
 
 
 class Control {
@@ -19,6 +21,8 @@ class Control {
         new Observer(this, this.model);
         new Compiler(this, main);
         setTimeout(() => {
+            console.log(renderTree);
+
             this.data.test = 'aaaaa';
         }, 1000);
        // addControl(this);

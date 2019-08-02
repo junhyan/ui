@@ -4,15 +4,15 @@ class  SingletonRouteFactory{
     constructor(Main, router) {
         
         this.router = router;
-        util.ajax(`/main.html`, {onsuccess: (data) => {
-            document.body.innerHTML = data;
-            let node = document.body.children[0];
+        // util.ajax(`/main.html`, {onsuccess: (data) => {
+        //     document.body.innerHTML = data;
+        //     let node = document.body.children[0];
             
-            let routeControl = new Main(node);
-            this.routes.push({name: '/main', routeControl: routeControl});
+        let routeControl = new Main(node);
+        this.routes.push({name: '/main', routeControl: routeControl});
             // new Compiler(node, );
           
-        }});
+        // }});
         this.routes = [];
 
         this.init();
