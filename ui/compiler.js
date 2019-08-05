@@ -79,7 +79,7 @@ export default class Compiler {
     }
     createRenderTree (renderRoot) {
         let that = this;
-        function render (root, astRoot) {
+        function renderer (root, astRoot) {
             astRoot.children.forEach( (item) => {
                 let renderNode = new RenderNode();
                 if (item.tag) {  
@@ -96,11 +96,20 @@ export default class Compiler {
                     renderNode.text = item.text;
                 }
                 root.children.push(renderNode);  
-                render(renderNode ,item);
+                renderer(renderNode ,item);
 
             });
         };
-        render(renderRoot, this.control.astTree);
+        renderer(renderRoot, this.control.astTree);
+        // TMP precess
+        if (this.control.constructor.name === 'Main') {
+            function render (root) {
+                root.children.forEach( (item) => {
+
+                });
+            }
+          
+        }
     }
 	nodeToFragment (el) {
         var fragment = document.createDocumentFragment();
