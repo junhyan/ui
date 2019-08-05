@@ -1,6 +1,11 @@
 import Control from '../ui/control.js'
 import Button from '../ui/button.js'
-var view = '<main><my-button style="display: block;height:100px;width:100px;background:red" :test="${test}"><div> ceshi </div></my-button>${test}${test1}<div id="index"></div></main>'
+var view = 
+'<div>'
+ +'<my-button style="display: block;height:100px;width:100px;background:red" if="${test}" bind=${test}></my-button>'
+ +'${test}${test1}'
+ +'<div id="index"></div>'
+ +'</div>';
 
 export default class Main extends Control {
     constructor() {
@@ -8,8 +13,8 @@ export default class Main extends Control {
     }
 }
 class MyButton extends Button {
-    constructor(main) {
-        super(main);
+    constructor() {
+        super('<div>mybutton</div>');
     }
     $click() {
         super.$click();

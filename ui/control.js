@@ -21,11 +21,11 @@ class Control {
         }
         new Observer(this, this.model);
         new Compiler(this);
-        setTimeout(() => {
-            console.log(renderTree);
+        // setTimeout(() => {
+        //     console.log(renderTree);
 
-            this.data.test = 'aaaaa';
-        }, 1000);
+        //     this.data.test = 'aaaaa';
+        // }, 1000);
        // addControl(this);
     }
     $click(event) {

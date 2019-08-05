@@ -1,15 +1,36 @@
 import Watcher from './watcher.js';
 import util from './util.js'
 import RouteFactory from '../ui/route-factory.js';
-
-var renderTree;
-var Command = {
-    IF: 0,
-    ELSEIF: 1,
-    ELSE: 2,
-    FOR: 3,
-    BIND: 4
-}
+class RenderNode {
+    constructor(tag, className, style,  children = []) {
+        this.tag = tag;
+        this.className = className;
+        this.style = style;
+        this.children = children;
+    }
+ }
+ class AstNode {
+    constructor(tag, className, style, commands = {}, parent, children = [], pre, next, text) {
+        this.tag = tag;
+        this.className = className;
+        this.style = style;
+        this.commands = commands;
+        this.parent = parent;
+        this.children = children;
+        this.pre = pre;
+        this.next = next;
+        this.text = text;
+    }
+ }
+var curRenderRoot = new RenderNode(),
+    renderTree = curRenderRoot;
+var Commands = [
+    'IF',
+    'ELSEIF',
+    'ELSE',
+    'FOR',
+    'BIND'
+];
 export default class Compiler {
     constructor(control) {
         this.control = control;
@@ -21,11 +42,19 @@ export default class Compiler {
         this.createAST(control.view);
     }
     createAST(elStr) {
-        debugger
         var tmpEL = document.createElement('DIV');
         tmpEL.innerHTML = elStr;
         var root = new AstNode();
         ast(root, tmpEL);
+        function getComments(node, commands) {
+            //let commands = {};
+            node.getAttributeNames().forEach((item) => {
+                if (Commands.indexOf(item.toUpperCase()) !== -1) {
+                    commands[item] = node.getAttribute(item);
+                }
+            });
+            //return commands;
+        }
         function ast (root, el) {
             Array.from(el.childNodes).forEach( (item) => {
                 if (item.nodeType === 1) {
@@ -35,17 +64,43 @@ export default class Compiler {
                     node.style = item.style;
                     node.parent = root;
                     root.children.push(node);
+                    getComments(item, node.commands);
                     ast(node, item);
                 } else if (item.nodeType === 3) {
                     let node = new AstNode();
                     node.parent = root;
                     root.children.push(node);
+                    node.text = item.textContent;
                 }
             });
         }
+        this.control.astTree = root;
+        this.createRenderTree(curRenderRoot);
+    }
+    createRenderTree (renderRoot) {
+        let that = this;
+        function render (root, astRoot) {
+            astRoot.children.forEach( (item) => {
+                let renderNode = new RenderNode();
+                if (item.tag) {  
+                    renderNode.tag = item.tag;
+                    renderNode.style = item.style;
+                    renderNode.className = item.className;
+                    let tagName = item.tag.toLowerCase(),
+                    controlName = tagName.charAt(0).toUpperCase() + util.toCamelCase(tagName.slice(1));
+                    if (that.control.units.hasOwnProperty(controlName)) {
+                        curRenderRoot = renderNode;                   
+                        that.create(that.control.units[controlName]);  
+                    }
+                } else {
+                    renderNode.text = item.text;
+                }
+                root.children.push(renderNode);  
+                render(renderNode ,item);
 
-        console.log(root, tmpEL);
-
+            });
+        };
+        render(renderRoot, this.control.astTree);
     }
 	nodeToFragment (el) {
         var fragment = document.createDocumentFragment();
@@ -57,11 +112,11 @@ export default class Compiler {
         // }
         return fragment;
     }
-    create(Control, el, options) {
+    create(Control) {
         if (!Control) {
             return null;
         }
-        return new Control(el, options);
+        return new Control();
     }
     tmp() {
         if (node.nodeType === 1) {
@@ -183,28 +238,5 @@ export default class Compiler {
         return options;
     }
 }
-class RenderNode {
-    constructor( type, domNode, attrs, children, ifData, preSibling, nextSibling) {
-        this.type = type;
-        this.domNode = domNode;
-        this.attrs = attrs;
-        this.children = children || [];
-        this.ifData = ifData;
-        this.preSibling = preSibling;
-        this.nextSibling = nextSibling;
-        domNode.abstractNode = this;
-    }
- }
- class AstNode {
-    constructor(tag, className, style, commands, parent, children, pre, next) {
-        this.tag = tag;
-        this.className = className;
-        this.style = style;
-        this.commands = commands;
-        this.parent = parent;
-        this.children = children || [];
-        this.pre = pre;
-        this.next = next;
-    }
- }
+
  export {renderTree};
