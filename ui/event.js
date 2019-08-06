@@ -8,7 +8,7 @@ class Event {
         return this.nativeEvent;
     }
     getTarget() {
-        return util.getControl(this.nativeEvent.target);
+        return this.nativeEvent.target.control || null;
     }
     exit() {
         this.preventDefault();

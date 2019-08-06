@@ -2,14 +2,24 @@ import Control from '../ui/control.js'
 import Button from '../ui/button.js'
 var view = 
 '<div class="main">'
- +'<my-button style="display: block;height:100px;width:100px;background:red" if="${test}" bind=${test}></my-button>'
- +'${test}${test1}'
+ +'<my-button style="display: block;height:100px;width:100px;background:#FCFCFC" if="test" bind="test"></my-button>'
+ +'<div style="display: block;height:100px;width:100px;background:#FCFCFC"  elseif="test" >bbb</div>'
+ +'<div style="display: block;height:100px;width:100px;background:#FCFCFC"  else>ccc</div>'
+ +'<div style="display: block;height:100px;width:100px;background:#FCFCFC" if="testc" bind="test">mmm</div>'
+ +'<div style="display: block;height:100px;width:100px;background:#FCFCFC" else bind="test">nnn</div>'
+ +'<div style="display: block;height:100px;width:100px;background:#FCFCFC"  for="test2 as item">${item}, ${index}</div>'
+ +'${test}----${test1}'
  +'<div id="index"></div>'
  +'</div>';
 
 export default class Main extends Control {
     constructor() {
-        super(view, 'main', {units: {MyButton}});
+        super(view, {
+            test: 'hahaha',
+            test1: 'gagaag',
+            test2: ['aa', 'bb', 'cc']
+        }, 'main', {units: {MyButton}});
+        
     }
 }
 class MyButton extends Button {

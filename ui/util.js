@@ -36,6 +36,9 @@ class Util {
     getControl(el) {
         return el.getControl && el.getControl();
     }
+    isEmptyObject(obj) {
+        return Object.keys(obj).length === 0;
+    }
     copy(des, src) {
         for (var key in src) {
             if (src.hasOwnProperty(key)) {
