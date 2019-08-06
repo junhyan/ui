@@ -3,11 +3,12 @@ import util from './util.js'
 import RouteFactory from '../ui/route-factory.js';
 
 class RenderNode {
-    constructor(tag, className, style,  children = []) {
+    constructor(tag, className, style,  children = [], parent) {
         this.tag = tag;
         this.className = className;
         this.style = style;
         this.children = children;
+        this.parent = parent;
     }
  }
  class AstNode {
@@ -166,6 +167,7 @@ export default class Compiler {
                     }
                     renderNode.forEach((nodeItem) => {
                         root.children.push(nodeItem); 
+                        nodeItem.parent = root;
                         renderer(item, nodeItem);
                     });
                 }
@@ -217,7 +219,6 @@ export default class Compiler {
                 let key = RegExp.$1;
                 item = {};
                 if (key === 'test') {
-
                 }
                 item[key] = this.getData(node, key);
             }

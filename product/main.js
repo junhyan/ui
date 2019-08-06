@@ -17,7 +17,8 @@ export default class Main extends Control {
         super(view, {
             test: 'hahaha',
             test1: 'gagaag',
-            test2: ['aa', 'bb', 'cc']
+            test2: ['aa', 'bb', 'cc'],
+            item: 1
         }, 'main', {units: {MyButton}});
         
     }
