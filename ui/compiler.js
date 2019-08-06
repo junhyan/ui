@@ -103,12 +103,28 @@ export default class Compiler {
         renderer(renderRoot, this.control.astTree);
         // TMP precess
         if (this.control.constructor.name === 'Main') {
-            function render (root) {
+            let fragment = document.createDocumentFragment();
+            function render (root, el) {
                 root.children.forEach( (item) => {
-
+                    let child;
+                    if (item.tag) {
+                        console.log(item.style.height);
+                        child = document.createElement(item.tag);
+                        util.copy(child, {
+                            className: item.className,
+                            style: item.style.cssText
+                        });
+                    } else {
+                        child = document.createTextNode(item.text);
+                    }
+                    
+                    el.appendChild(child);
+                    render(item, child);
                 });
             }
-          
+            render(renderTree, fragment);
+            //console.log(fragment);
+            document.body.appendChild(fragment);            
         }
     }
 	nodeToFragment (el) {

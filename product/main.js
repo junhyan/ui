@@ -1,7 +1,7 @@
 import Control from '../ui/control.js'
 import Button from '../ui/button.js'
 var view = 
-'<div>'
+'<div class="main">'
  +'<my-button style="display: block;height:100px;width:100px;background:red" if="${test}" bind=${test}></my-button>'
  +'${test}${test1}'
  +'<div id="index"></div>'

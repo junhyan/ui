@@ -36,6 +36,19 @@ class Util {
     getControl(el) {
         return el.getControl && el.getControl();
     }
+    copy(des, src) {
+        for (var key in src) {
+            if (src.hasOwnProperty(key)) {
+                if (src[key]) {
+                    if ('object' === typeof src[key]) {
+                        this.copy(des[key], src[key]);
+                    } else {
+                        des[key] = src[key];
+                    }
+                }
+            }
+        }
+    }
     ajax(url, options) {
         function stateChangeHandler() {
             if (xhr.readyState === 4) {
