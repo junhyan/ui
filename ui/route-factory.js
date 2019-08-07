@@ -9,6 +9,8 @@ class  SingletonRouteFactory{
         //     let node = document.body.children[0];
             
         let routeControl = new Main();
+        routeControl.isInit = true;
+        routeControl.load(document.body);
         this.routes = [];
         this.routes.push({name: '/main', routeControl: routeControl});
             // new Compiler(node, );

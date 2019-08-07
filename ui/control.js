@@ -16,14 +16,16 @@ class Control {
         // main.getControl = () => main.control;
         this.view = view;
         this.model = model
-        new Observer(this, this.model);
-        new Compiler(this);
+        new Observer(this, this.model);       
         // setTimeout(() => {
         //     console.log(renderTree);
 
         //     this.data.test = 'aaaaa';
         // }, 1000);
        // addControl(this);
+    }
+    load(parent) {
+        new Compiler(this, parent);
     }
     $click(event) {
         console.log('click');

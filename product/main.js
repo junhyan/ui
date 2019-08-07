@@ -2,30 +2,63 @@ import Control from '../ui/control.js'
 import Button from '../ui/button.js'
 var view = 
 '<div class="main">'
- +'<my-button style="display: block;height:100px;width:100px;background:#FCFCFC" if="test" bind="test"></my-button>'
+ +'<my-button style="display: block;height:100px;width:100px;background:#FCFCFC" if="test" :test="test" :test1="test1"></my-button>'
+ +'<m-button style="display: block;height:100px;width:100px;background:#FCFCFC" if="test" :test="test" :test1="test1"></m-button>'
  +'<div style="display: block;height:100px;width:100px;background:#FCFCFC"  elseif="test" >bbb</div>'
  +'<div style="display: block;height:100px;width:100px;background:#FCFCFC"  else>ccc</div>'
- +'<div style="display: block;height:100px;width:100px;background:#FCFCFC" if="testc" bind="test">mmm</div>'
+ +'<div style="display: block;height:100px;width:100px;background:#FCFCFC" if="testc" >mmm</div>'
  +'<div style="display: block;height:100px;width:100px;background:#FCFCFC" else bind="test">nnn</div>'
- +'<div style="display: block;height:100px;width:100px;background:#FCFCFC"  for="test2 as item, index">${item}, ${index}</div>'
+ +'<div style="display: block;height:100px;width:100px;background:#FCFCFC"  for="test2 as item, index">'
+ +'<div>${index}</div>'
+ +'<div for="item as subitem,subindex">${subitem}--${subindex}</div>'
+ +'</div>'
  +'${test}----${test1}'
  +'<div id="index"></div>'
  +'</div>';
 
 export default class Main extends Control {
-    constructor() {
+    constructor(props) {
         super(view, {
             test: 'hahaha',
             test1: 'gagaag',
-            test2: ['aa', 'bb', 'cc'],
+            test2: [['aa','aa'], ['bb','bb'], ['cc','cc']],
             item: 1
-        }, 'main', {units: {MyButton}});
+        }, 'main', {units: {MyButton, MButton}});
         
     }
 }
 class MyButton extends Button {
-    constructor() {
-        super('<div>mybutton</div>');
+    constructor(props) {
+        super('<div>mybutton ${test1}--${test}</div>', Object.assign(props, {test:'test'}));
+    }
+    $click() {
+        super.$click();
+    }
+    onclick() {
+        console.log('click');
+    }
+    onmouseover() {
+        // console.log('mouseover');
+    }
+    onmouseout() {
+        // console.log('mouseout');
+    }
+    onmousedown() {
+        // console.log('mousedown');
+    }
+    onmouseup() {
+        // console.log('mouseup');
+    }
+    onmousemove() {
+        // console.log('mousemove');
+    }
+    ontouchstart() {
+        // console.log('touchstart');
+    }
+}
+class MButton extends Button {
+    constructor(props) {
+        super('<div>mybutton ${test1}--${test}</div>', Object.assign(props, {test:'test'}));
     }
     $click() {
         super.$click();

@@ -1,7 +1,7 @@
 import Control from './control.js'
 class Button extends Control {
-    constructor(main, data) {
-        super(main);
+    constructor(view, model) {
+        super(view, model);
     }
     $click(event) {
         super.$click(event);

@@ -24,18 +24,18 @@ class RenderNode {
         this.text = text;
     }
  }
-var curRenderRoot = new RenderNode(),
-    renderTree = curRenderRoot;
+//var curRenderRoot = new RenderNode()
+//    renderTree = curRenderRoot;
 var Commands = [
     'IF',
     'ELSEIF',
     'ELSE',
-    'FOR',
-    'BIND'
+    'FOR'
 ];
 export default class Compiler {
-    constructor(control) {
+    constructor(control, parent) {
         this.control = control;
+        this.parent = parent;
         // let parent = el.parentNode;
         // let fragment = this.nodeToFragment(el);
 
@@ -50,9 +50,10 @@ export default class Compiler {
         function getComments(node, commands) {
             //let commands = {};
             node.getAttributeNames().forEach((item) => {
-                if (Commands.indexOf(item.toUpperCase()) !== -1) {
+                let command = item.toUpperCase();
+                if (Commands.indexOf(command) !== -1) {
                     if (item.toUpperCase() === 'ELSE') {
-                        commands[item.toUpperCase()] = true;
+                        commands[command] = true;
                     } 
                     // else if (item.toUpperCase() === 'FOR') {
                     //     let str = node.getAttribute(item);
@@ -60,8 +61,10 @@ export default class Compiler {
                     //     node.scope = 
                     // } 
                     else {
-                        commands[item.toUpperCase()] = node.getAttribute(item);
+                        commands[command] = node.getAttribute(item);
                     }
+                } else if (/:.+/.test(item)) {
+                    commands[item] = node.getAttribute(item);
                 }
             });
             //return commands;
@@ -95,8 +98,8 @@ export default class Compiler {
         }
         ast(root, tmpEL);
         this.control.astTree = root;
-        curRenderRoot.scope =  this.control.model;
-        this.createRenderTree(curRenderRoot);
+
+        this.createRenderTree();
 
     }
     getData(node, key) {
@@ -106,7 +109,7 @@ export default class Compiler {
             }
         }
     }
-    createRenderNode (item) {
+    createRenderNode (root, item) {
         let renderNode = new RenderNode();
         renderNode.tag = item.tag;
         renderNode.style = item.style;
@@ -114,12 +117,24 @@ export default class Compiler {
         let tagName = item.tag.toLowerCase(),
             controlName = tagName.charAt(0).toUpperCase() + util.toCamelCase(tagName.slice(1));
         if (this.control.units.hasOwnProperty(controlName)) {
-            curRenderRoot = renderNode;  
-            renderNode.control = this.create(this.control.units[controlName]);
+            let props = {};
+            for (let key in item.commands) {
+                if (item.commands.hasOwnProperty(key)) {
+                    if (/:(.+)/.test(key)) {
+                        props[RegExp.$1] = this.getData(root, item.commands[key]);
+                    }
+                }
+            } 
+            renderNode.control = this.create(this.control.units[controlName], props);
+           // renderNode.control.load();
+            
         }
         return renderNode;
     }
-    createRenderTree (renderRoot) {
+    createRenderTree () {
+        this.control.renderTree = new RenderNode();
+        this.control.renderTree.scope =  this.control.model;
+       
         let that = this;
         function renderer (astRoot, root) {
             let tag = {}, count = 0;
@@ -127,27 +142,26 @@ export default class Compiler {
             astRoot.children.forEach( (item) => {
                 let renderNode;
                 if (item.tag) {
-                    //console.log(item.commands.IF)
                     if (!util.isEmptyObject(item.commands)) {
                         if (item.commands.IF) {
                             ++count;
                         }
-                        if (that.control.model[item.commands.IF]) {
-                            renderNode = that.createRenderNode(item);
+                        if (that.getData(root, item.commands.IF)) {
+                            renderNode = that.createRenderNode(root, item);
                             tag[count] = true;
                            
-                        } else if (that.control.model[item.commands.ELSEIF] && !tag[count]) {
+                        } else if (that.getData(root,item.commands.ELSEIF) && !tag[count]) {
 
-                            renderNode = that.createRenderNode(item);
+                            renderNode = that.createRenderNode(root, item);
                             tag[count] = true;
                         } else if (item.commands.ELSE && !tag[count]) {
-                            renderNode = that.createRenderNode(item);
+                            renderNode = that.createRenderNode(root, item);
                         } else if (item.commands.FOR) {
                             let str = item.commands.FOR;
                             let arr = str.split('as');
                             renderNode = [];
-                            that.control.model[arr[0].trim()].forEach((dataItem, index) => {
-                                let forNode = that.createRenderNode(item);
+                            that.getData(root, arr[0].trim()).forEach((dataItem, index) => {
+                                let forNode = that.createRenderNode(root, item);
                                 let varialbe = arr[1].split(',');
                                 forNode.scope = {};
                                 forNode.scope[varialbe[0].trim()] = dataItem;
@@ -156,7 +170,7 @@ export default class Compiler {
                             });
                         }
                     } else {
-                        renderNode = that.createRenderNode(item);
+                        renderNode = that.createRenderNode(root, item);
                     }
                     
                 } else {
@@ -176,36 +190,72 @@ export default class Compiler {
 
             });
         };
-
-        renderer(this.control.astTree, renderRoot);
-        // TMP workaround
-        if (this.control.constructor.name === 'Main') {
-            let fragment = document.createDocumentFragment();
-            function render (root, el) {
-                root.children.forEach( (item) => {
-                    let child;
-                    if (item.tag) {
-                        child = document.createElement(item.tag);
-                        util.copy(child, {
-                            className: item.className,
-                            style: item.style.cssText
-                        });
-                        // control 与 el bind 
-                        if (item.control) {
-                            child.control = item.control;
-                            item.control.main = child;
-                        }
-                    } else {
-                        child = document.createTextNode(item.text);
-                    }
-                    
-                    el.appendChild(child);
-                    render(item, child);
-                });
-            }
-            render(renderTree, fragment);
-            document.body.appendChild(fragment);            
+        
+        renderer(this.control.astTree, this.control.renderTree);
+        
+        this.renderControl(this.control.renderTree, this.parent);
+    }
+    renderControl(renderTree, parent) {
+        if (renderTree.children.length === 0 || parent.nodeType === 3) {
+            return;
         }
+        let controls = [];
+        let fragment = document.createDocumentFragment();
+        renderTree.children.forEach((item) => {
+            let child;
+            if (item.tag) {
+                
+                child = document.createElement(item.tag);
+                util.copy(child, {
+                    className: item.className,
+                    style: item.style.cssText
+                });
+                // control 与 el bind 
+                if (item.control) {
+                    child.control = item.control;
+                    item.control.main = child;
+                    controls.push(item.control);
+                }
+            } else {
+                child = document.createTextNode(item.text);
+            }
+            fragment.appendChild(child);
+            
+            this.renderControl(item, child);
+        });
+        parent.appendChild(fragment);
+        controls.forEach((control) => {
+            control.load(control.main);
+        });
+        // console.log(parent, fragment);
+        // parent.appendChild(fragment);
+        // function render (root, el) {
+        //     root.children.forEach( (item) => {
+        //         let child;
+        //         if (item.tag) {
+        //             child = document.createElement(item.tag);
+        //             util.copy(child, {
+        //                 className: item.className,
+        //                 style: item.style.cssText
+        //             });
+        //             // control 与 el bind 
+        //             if (item.control) {
+        //                 child.control = item.control;
+        //                 item.control.main = child;
+        //                 item.control.load(child);
+        //             }
+        //         } else {
+        //             child = document.createTextNode(item.text);
+        //         }
+                
+        //         el.appendChild(child);
+        //         render(item, child);
+        //     });
+        // }
+        // render(renderTree, fragment);
+        // console.log(fragment)
+        // debugger
+        // this.parent.appendChild(fragment);        
     }
     parseText(text, node) {
         let arr = text.match(/\$\{(.+?)\}/g);
@@ -245,11 +295,11 @@ export default class Compiler {
     //     // }
     //     return fragment;
     // }
-    create(Control) {
+    create(Control, props) {
         if (!Control) {
             return null;
         }
-        return new Control();
+        return new Control(props);
     }
     // tmp() {
     //     if (node.nodeType === 1) {
@@ -372,4 +422,4 @@ export default class Compiler {
     // }
 }
 
- export {renderTree};
+ // export {renderTree};

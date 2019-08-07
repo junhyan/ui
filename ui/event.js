@@ -8,7 +8,11 @@ class Event {
         return this.nativeEvent;
     }
     getTarget() {
-        return this.nativeEvent.target.control || null;
+        for (let el = this.nativeEvent.target; el; el = el.parentNode) {
+            if (el.control) {
+                return el.control;
+            }
+        }
     }
     exit() {
         this.preventDefault();
