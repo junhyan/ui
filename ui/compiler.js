@@ -134,7 +134,12 @@ export default class Compiler {
     createRenderTree () {
         this.control.renderTree = new RenderNode();
         this.control.renderTree.scope =  this.control.model;
-       
+        Object.keys(this.control.model).forEach((key) => {
+            new Watcher(this.control, key, (key, value) => {
+                this.createRenderTree();
+            });
+        });
+        
         let that = this;
         function renderer (astRoot, root) {
             let tag = {}, count = 0;
@@ -187,15 +192,29 @@ export default class Compiler {
                         renderer(item, nodeItem);
                     });
                 }
-
+                
             });
         };
         
         renderer(this.control.astTree, this.control.renderTree);
-        
-        this.renderControl(this.control.renderTree, this.parent);
+        if (this.control.oldRenderTree) {
+            let res = this.compare(this.control.oldRenderTree, this.control.renderTree)
+            this.renderControl(res[0].renderParent, res[0].parent);
+        } else {
+            this.renderControl(this.control.renderTree, this.parent);
+        }
+        this.control.oldRenderTree = this.control.renderTree;
+
+    }
+    compare(oldTree, newTree) {
+        let res = [];
+        if (oldTree.children[0].children[0].text !== newTree.children[0].children[0].text) {
+            res.push({renderParent: newTree.children[0], parent:oldTree.children[0].dom});
+        }
+        return res;
     }
     renderControl(renderTree, parent) {
+        parent.innerHTML = '';
         if (renderTree.children.length === 0 || parent.nodeType === 3) {
             return;
         }
@@ -210,6 +229,7 @@ export default class Compiler {
                     className: item.className,
                     style: item.style.cssText
                 });
+                item.dom = child;
                 // control 与 el bind 
                 if (item.control) {
                     child.control = item.control;
@@ -227,35 +247,6 @@ export default class Compiler {
         controls.forEach((control) => {
             control.load(control.main);
         });
-        // console.log(parent, fragment);
-        // parent.appendChild(fragment);
-        // function render (root, el) {
-        //     root.children.forEach( (item) => {
-        //         let child;
-        //         if (item.tag) {
-        //             child = document.createElement(item.tag);
-        //             util.copy(child, {
-        //                 className: item.className,
-        //                 style: item.style.cssText
-        //             });
-        //             // control 与 el bind 
-        //             if (item.control) {
-        //                 child.control = item.control;
-        //                 item.control.main = child;
-        //                 item.control.load(child);
-        //             }
-        //         } else {
-        //             child = document.createTextNode(item.text);
-        //         }
-                
-        //         el.appendChild(child);
-        //         render(item, child);
-        //     });
-        // }
-        // render(renderTree, fragment);
-        // console.log(fragment)
-        // debugger
-        // this.parent.appendChild(fragment);        
     }
     parseText(text, node) {
         let arr = text.match(/\$\{(.+?)\}/g);
@@ -285,16 +276,7 @@ export default class Compiler {
         });
         return res;
     }
-	// nodeToFragment (el) {
-    //     var fragment = document.createDocumentFragment();
-    //     fragment.appendChild(el);
-    //     // while (child) {
-    //     //     // 将Dom元素移入fragment中
-    //     //     fragment.appendChild(child);
-    //     //     child = el.firstChild
-    //     // }
-    //     return fragment;
-    // }
+	
     create(Control, props) {
         if (!Control) {
             return null;

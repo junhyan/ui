@@ -19,7 +19,7 @@ var view =
 export default class Main extends Control {
     constructor(props) {
         super(view, {
-            test: 'hahaha',
+            test: true,
             test1: 'gagaag',
             test2: [['aa','aa'], ['bb','bb'], ['cc','cc']],
             item: 1
@@ -30,6 +30,9 @@ export default class Main extends Control {
 class MyButton extends Button {
     constructor(props) {
         super('<div>mybutton ${test1}--${test}</div>', Object.assign(props, {test:'test'}));
+        setTimeout(() => {
+            this.data.test = 'aaa';
+        }, 1000);
     }
     $click() {
         super.$click();

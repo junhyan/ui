@@ -9,7 +9,7 @@ export default class Dep {
     	this.subs.push(sub)
   	}
   	notify () {
-		  // TODO need to be optimized
+		// TODO need to be optimized
   		this.subs.forEach(function(sub) {
             sub.update();
         });
