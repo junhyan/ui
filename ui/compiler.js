@@ -146,10 +146,12 @@ export default class Compiler {
                             let str = item.commands.FOR;
                             let arr = str.split('as');
                             renderNode = [];
-                            that.control.model[arr[0].trim()].forEach( (dataItem, index) => {
+                            that.control.model[arr[0].trim()].forEach((dataItem, index) => {
                                 let forNode = that.createRenderNode(item);
+                                let varialbe = arr[1].split(',');
                                 forNode.scope = {};
-                                forNode.scope[arr[1].trim()] = dataItem;
+                                forNode.scope[varialbe[0].trim()] = dataItem;
+                                forNode.scope[varialbe[1].trim()] = index;
                                 renderNode.push(forNode);
                             });
                         }

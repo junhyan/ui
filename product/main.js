@@ -7,7 +7,7 @@ var view =
  +'<div style="display: block;height:100px;width:100px;background:#FCFCFC"  else>ccc</div>'
  +'<div style="display: block;height:100px;width:100px;background:#FCFCFC" if="testc" bind="test">mmm</div>'
  +'<div style="display: block;height:100px;width:100px;background:#FCFCFC" else bind="test">nnn</div>'
- +'<div style="display: block;height:100px;width:100px;background:#FCFCFC"  for="test2 as item">${item}, ${index}</div>'
+ +'<div style="display: block;height:100px;width:100px;background:#FCFCFC"  for="test2 as item, index">${item}, ${index}</div>'
  +'${test}----${test1}'
  +'<div id="index"></div>'
  +'</div>';
