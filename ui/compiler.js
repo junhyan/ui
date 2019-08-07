@@ -134,6 +134,7 @@ export default class Compiler {
     createRenderTree () {
         this.control.renderTree = new RenderNode();
         this.control.renderTree.scope =  this.control.model;
+        this.control.renderTree.dom =  this.parent;
         Object.keys(this.control.model).forEach((key) => {
             new Watcher(this.control, key, (key, value) => {
                 this.createRenderTree();
@@ -199,18 +200,77 @@ export default class Compiler {
         renderer(this.control.astTree, this.control.renderTree);
         if (this.control.oldRenderTree) {
             let res = this.compare(this.control.oldRenderTree, this.control.renderTree)
-            this.renderControl(res[0].renderParent, res[0].parent);
+            res.forEach((item) => {
+                this.renderControl(item, item.dom);
+            });
         } else {
             this.renderControl(this.control.renderTree, this.parent);
         }
         this.control.oldRenderTree = this.control.renderTree;
 
     }
+    // 根据树的层次遍历 判断是否相同，返回所有的有变化的父节点
     compare(oldTree, newTree) {
-        let res = [];
-        if (oldTree.children[0].children[0].text !== newTree.children[0].children[0].text) {
-            res.push({renderParent: newTree.children[0], parent:oldTree.children[0].dom});
+        let res = [],
+            oldArr = [oldTree],
+            newArr = [newTree];
+       while (oldArr.length && newArr.length) {
+            // if (oldArr.length !== newArr.length) {
+            //     res.push(newArr[0].parent);
+            //     continue;
+            // }
+            let tmpOld = [], tmpNew = [];
+            for (let i = 0; i < Math.min(oldArr.length, newArr.length); i++) {
+                let diff = false;
+                let oldChildren = oldArr[i].children,
+                    newChildren = newArr[i].children;
+                newArr[i].dom = oldArr[i].dom;                
+                if (oldChildren.length !== newChildren.length) {
+                    res.push(newArr[i]);
+                    diff = true;
+                    break;
+                } else {
+                    for (let j = 0; j < oldChildren.length; j++) {
+                        if (oldChildren[j].text !== newChildren[j].text) {
+                            res.push(newArr[i]);
+                            diff = true;
+                            break;
+                        }
+                    }    
+                }
+                if (!diff) {
+                    tmpOld = tmpOld.concat(oldArr[i].children);
+                    tmpNew = tmpNew.concat(newArr[i].children);
+                }
+                
+            }
+            oldArr = tmpOld;
+            newArr = tmpNew;
+            // if (!diff) {
+            //     let tmpArr = [];
+            //     tmpArr =  tmpArr.concat(oldArr);
+            //     console.log(tmpArr);
+            //     oldArr = [];
+            //     tmpArr.forEach((item) => {
+            //         oldArr = oldArr.concat(item.children);
+            //     });
+            //     tmpArr = [];
+            //     tmpArr =  tmpArr.concat(newArr);
+
+            //     console.log(tmpArr);
+
+            //     newArr = [];
+            //     tmpArr.forEach((item) => {
+            //         newArr = newArr.concat(item.children);
+            //     });
+            //     debugger
+            // } else {
+
+            // }
         }
+        // if (oldTree.children[0].children[0].text !== newTree.children[0].children[0].text) {
+        //     res.push({renderParent: newTree.children[0], parent:oldTree.children[0].dom});
+        // }
         return res;
     }
     renderControl(renderTree, parent) {
