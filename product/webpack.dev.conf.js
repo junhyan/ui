@@ -11,6 +11,10 @@ const HtmlWebpackPluginConfig={
 
 
 module.exports = {
+    resolveLoader:{
+        // 去哪些目录下寻找 Loader，有先后顺序之分
+        modules: ['node_modules','./'],
+    },
     // context: path.resolve(__dirname,'../src'), //D:\03www2018\study\webpack2017\build\src
     entry: {
        app: './index.js'
@@ -22,7 +26,10 @@ module.exports = {
     },
     module: {        
         rules: [       
-
+            {
+                test: /\.ui/,
+                use: ['ui-loader'],
+              },
             ]
       },
     plugins: [
