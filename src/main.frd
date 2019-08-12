@@ -1,5 +1,6 @@
 import Control from '../ui/control.js'
 import Button from '../ui/button.js'
+import css from './main.css'
 var view = 
 '<div class="main">'
  +'<my-button style="display: block;height:100px;width:300px;background:#FCFCFC" if="test" :test="test" :test1="test1"></my-button>'
