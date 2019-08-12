@@ -1,28 +1,29 @@
+<view>
+    <div class="main">
+        <my-button style="display: block;height:100px;width:300px;background:#FCFCFC" if="test" :test="test" :test1="test1"></my-button>
+        <m-button style="display: block;height:100px;width:100px;background:#FCFCFC" if="test" :test="test" :test1="test1"></m-button>
+        <div style="display: block;height:100px;width:100px;background:#FCFCFC"  elseif="test" >bbb</div>
+        <div style="display: block;height:100px;width:100px;background:#FCFCFC"  else>ccc</div>
+        <div style="display: block;height:100px;width:100px;background:#FCFCFC" if="testc" >mmm</div>
+        <div style="display: block;height:100px;width:100px;background:#FCFCFC" else bind="test">nnn</div>
+        <div style="display: block;height:100px;width:100px;background:#FCFCFC"  for="test2 as item, index">
+        <div>${index}</div>
+        <div for="item as subitem,subindex">${subitem}--${subindex}</div>
+        </div>
+        <div style="display: block;height:100px;width:100px;background:#FCFCFC">
+        <div>${test3}</div>
+        </div>
+            ${test}----${test1}
+        <div style="display: block;height:100px;width:100px;background:#FCFCFC">
+        <div>${test3}</div>
+        </div>
+        <div id="index"></div>
+    </div>
+</view>
+
 import Control from '../ui/control.js'
 import Button from '../ui/button.js'
 import css from './main.css'
-var view = 
-'<div class="main">'
- +'<my-button style="display: block;height:100px;width:300px;background:#FCFCFC" if="test" :test="test" :test1="test1"></my-button>'
- +'<m-button style="display: block;height:100px;width:100px;background:#FCFCFC" if="test" :test="test" :test1="test1"></m-button>'
- +'<div style="display: block;height:100px;width:100px;background:#FCFCFC"  elseif="test" >bbb</div>'
- +'<div style="display: block;height:100px;width:100px;background:#FCFCFC"  else>ccc</div>'
- +'<div style="display: block;height:100px;width:100px;background:#FCFCFC" if="testc" >mmm</div>'
- +'<div style="display: block;height:100px;width:100px;background:#FCFCFC" else bind="test">nnn</div>'
- +'<div style="display: block;height:100px;width:100px;background:#FCFCFC"  for="test2 as item, index">'
- +' <div>${index}</div>'
- +' <div for="item as subitem,subindex">${subitem}--${subindex}</div>'
- +'</div>'
- +'<div style="display: block;height:100px;width:100px;background:#FCFCFC">'
- +' <div>${test3}</div>'
- +'</div>'
-
- +'${test}----${test1}'
- +'<div style="display: block;height:100px;width:100px;background:#FCFCFC">'
- +' <div>${test3}</div>'
- +'</div>'
- +'<div id="index"></div>'
- +'</div>';
 
 export default class Main extends Control {
     constructor(props) {

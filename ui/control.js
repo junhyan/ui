@@ -14,7 +14,11 @@ class Control {
         // util.addClass(this.main, this.primaryClass);
         // main.control = this;
         // main.getControl = () => main.control;
-        this.view = view;
+        if (typeof(view) === 'string') {
+            this.view = view;
+        } else {
+            this.astTree = view;
+        }
         this.model = model
         new Observer(this, this.model);       
         // setTimeout(() => {
@@ -25,7 +29,8 @@ class Control {
        // addControl(this);
     }
     load(parent) {
-        new Compiler(this, parent);
+        let com = new Compiler(this, parent);
+        com.createRenderTree();
     }
     $click(event) {
         console.log('click');

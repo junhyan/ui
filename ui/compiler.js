@@ -41,7 +41,9 @@ export default class Compiler {
 
         // this.compileElement(fragment.firstChild);
         // el.appendChild(fragment);
-        this.createAST(control.view);
+        if (!this.control.astTree) {
+            this.createAST(control.view);
+        }
     }
     createAST(elStr) {
         let tmpEL = document.createElement('DIV');
@@ -77,29 +79,22 @@ export default class Compiler {
                     
                     node.tag = item.tagName;
                     node.className = item.className;
-                    node.style = item.style;
-                    node.parent = root;
+                    node.style = item.style.cssText;
                     root.children.push(node);
                     getComments(item, node.commands);
                     
                 } else if (item.nodeType === 3) {
                     let node = new AstNode();
-                    node.parent = root;
                     root.children.push(node);
                     node.text = item.textContent;
                 }
-                if (pre) {
-                    pre.next = node;
-                }
-                node.pre = pre;
-                pre = node;
                 ast(node, item);
             });
         }
         ast(root, tmpEL);
         this.control.astTree = root;
 
-        this.createRenderTree();
+      //  this.createRenderTree();
 
     }
     getData(node, key) {
@@ -287,7 +282,7 @@ export default class Compiler {
                 child = document.createElement(item.tag);
                 util.copy(child, {
                     className: item.className,
-                    style: item.style.cssText
+                    style: item.style
                 });
                 item.dom = child;
                 // control 与 el bind 
