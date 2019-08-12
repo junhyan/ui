@@ -8,11 +8,7 @@ var document = new JSDOM('<body></body>').window.document;
         this.className = className;
         this.style = style;
         this.commands = commands;
-        this.parent = parent;
         this.children = children;
-        this.pre = pre;
-        this.next = next;
-        this.text = text;
     }
  }
 
