@@ -67,6 +67,9 @@ function createAST(elStr) {
 }
 module.exports = function(source) {
     let reg = /<view>([\S\s]*)<\/view>/;
+    let paths = this.resourcePath.split('/'),
+        css = paths[paths.length - 1].split('.')[0] + '.css';
+    source = `require('./${css}');\n` + source;
     if (reg.test(source)) {
         let elStr = RegExp.$1;
         source = source.replace(reg, 'const view=' + createAST(elStr.replace(/\n/g, '')));

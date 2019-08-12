@@ -1,5 +1,4 @@
 import Ui from '../ui/index.js'
 import Main from './main.frd'
 import Route from './route.js'
-import css from './index.css'
 new Ui().init(Main, new Route());

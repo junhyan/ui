@@ -23,7 +23,6 @@
 
 import Control from '../ui/control.js'
 import Button from '../ui/button.js'
-import css from './main.css'
 
 export default class Main extends Control {
     constructor(props) {
